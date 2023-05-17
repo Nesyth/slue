@@ -3,16 +3,9 @@ import io from "socket.io-client";
 import ChatRoom from "./ChatRoom";
 import Marquee from "react-fast-marquee";
 import { User } from "react-spotify-api";
-import {
-  Box,
-  Input,
-  Button,
-  Flex,
-  Tag,
-  Text
-} from '@chakra-ui/react';
+import { Box, Input, Button, Flex, Tag, Text } from "@chakra-ui/react";
 
-const socket = io.connect("http://localhost:3001");
+const socket = io.connect(process.env.REACT_APP_IO_SERVER);
 
 const genres = [
   "acoustic",
@@ -140,7 +133,7 @@ const genres = [
   "trip-hop",
   "turkish",
   "work-out",
-  "world-music"
+  "world-music",
 ];
 
 genres.sort(() => 0.5 - Math.random());
@@ -157,8 +150,8 @@ function Chat() {
   };
 
   const randomColor = () => {
-    var letters = '0123456789ABCDEF';
-    var color = '#';
+    var letters = "0123456789ABCDEF";
+    var color = "#";
     for (var i = 0; i < 6; i++) {
       color += letters[Math.floor(Math.random() * 16)];
     }
@@ -180,34 +173,36 @@ function Chat() {
                   setRoom(event.target.value);
                 }}
               />
-              <Button onClick={joinRoom} type="submit">Join</Button>
+              <Button onClick={joinRoom} type="submit">
+                Join
+              </Button>
             </Flex>
             <Marquee style="">
               <Flex m="10px" gap="10px">
-                  {genres.map((g) => (
-                    <Tag opacity="60%">{g}</Tag>
-                  ))};
+                {genres.map((g) => (
+                  <Tag opacity="60%">{g}</Tag>
+                ))}
+                ;
               </Flex>
             </Marquee>
           </Flex>
         </Flex>
       ) : (
         <User>
-            {(user) =>
-              !user.loading && user.data
-                ? (
-                  <>
-                    <ChatRoom 
-                      socket={socket} 
-                      room={room} 
-                      username={user.data.display_name} 
-                      avatar={user.data.images[0].url}
-                      id={user.data.id}
-                      url={user.data.external_urls.spotify}
-                    />
-                  </> 
-                ) : null
-            }
+          {(user) =>
+            !user.loading && user.data ? (
+              <>
+                <ChatRoom
+                  socket={socket}
+                  room={room}
+                  username={user.data.display_name}
+                  avatar={user.data.images[0].url}
+                  id={user.data.id}
+                  url={user.data.external_urls.spotify}
+                />
+              </>
+            ) : null
+          }
         </User>
       )}
     </Box>

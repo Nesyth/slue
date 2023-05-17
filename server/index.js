@@ -5,11 +5,14 @@ const cors = require("cors");
 const { Server } = require("socket.io");
 const msg = require("./models/model");
 const mongoose = require("mongoose");
-const bodyParser = require("body-parser")
+const bodyParser = require("body-parser");
 
-mongoose.connect('mongodb://127.0.0.1:27017/slue')
-    .then(() => console.log('Connected to DB'))
-    .catch(error => console.log(error));
+require("dotenv").config();
+
+mongoose
+  .connect(process.env.HOST)
+  .then(() => console.log("Connected to DB"))
+  .catch((error) => console.log(error));
 
 app.use(cors());
 
@@ -33,12 +36,16 @@ io.on("connection", (socket) => {
   });
 
   socket.on("loaded_room", (data) => {
-    msg.find({room: data}).sort({ $natural: 1 }).limit(50).then(result => {
-      socket.emit("output_messages", result);
-      // result.forEach(message => {
-      //   socket.emit("output_messages", message);
-      // });
-    });
+    msg
+      .find({ room: data })
+      .sort({ $natural: 1 })
+      .limit(50)
+      .then((result) => {
+        socket.emit("output_messages", result);
+        // result.forEach(message => {
+        //   socket.emit("output_messages", message);
+        // });
+      });
   });
 
   socket.on("send_message", (data) => {
